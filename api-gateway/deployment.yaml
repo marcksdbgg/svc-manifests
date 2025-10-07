@@ -6,6 +6,7 @@ metadata:
   # Nombre del Deployment
   name: api-gateway-deployment
   # Namespace donde se desplegará (¡ASEGÚRATE QUE EXISTA!)
+
   namespace: atenex
   labels:
     app: api-gateway
@@ -23,20 +24,27 @@ spec:
       containers:
         - name: api-gateway
           # La imagen será actualizada por el pipeline CI/CD
+
           # Ejemplo de imagen inicial, el pipeline la reemplazará
-          image: ghcr.io/dev-nyro/api-gateway:develop-e3b1da5
+          image: ghcr.io/marcksdbgg/api-gateway:main-3262f23
           # Política de pull de imagen (Always para asegurar la última, IfNotPresent si prefieres caché)
+
           imagePullPolicy: Always
           ports:
             # Nombre del puerto para referencia interna (ej. en Service)
             - name: http
               # Puerto que expone tu aplicación DENTRO del contenedor (Dockerfile/Gunicorn)
+
               containerPort: 8080
               protocol: TCP
           # No se necesita command/args si el CMD/ENTRYPOINT del Dockerfile es correcto y usa el puerto 8080
+
           # env: # La variable PORT ya debería estar configurada en tu app o Dockerfile si es necesaria
+
           #   - name: PORT
+
           #     value: "8080"
+
           # Carga variables de entorno desde ConfigMaps y Secrets
           envFrom:
             - configMapRef:
@@ -46,6 +54,7 @@ spec:
                 # ¡IMPORTANTE! Este Secret DEBE existir en el namespace 'atenex'
                 name: api-gateway-secrets
           # Límites y solicitudes de recursos (ajustar según monitorización)
+
           resources:
             requests: # Mínimo garantizado
               cpu: "100m" # 10% de un vCPU
@@ -53,4 +62,3 @@ spec:
             limits: # Máximo permitido
               cpu: "500m" # 50% de un vCPU
               memory: "512Mi" # 512 Mebibytes
-              
