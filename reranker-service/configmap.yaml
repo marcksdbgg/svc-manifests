@@ -1,0 +1,15 @@
+# reranker-service/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reranker-service-config
+  namespace: atenex
+data:
+  RERANKER_LOG_LEVEL: "INFO" # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  RERANKER_MODEL_NAME: "BAAI/bge-reranker-base" # Model from Hugging Face
+  RERANKER_MODEL_DEVICE: "cpu" # Device for inference (e.g., "cpu", "cuda:0")
+  RERANKER_HF_CACHE_DIR: "/app/.cache/huggingface" # Internal container path for model cache
+  RERANKER_BATCH_SIZE: "128" # Batch size for reranker predictions
+  RERANKER_MAX_SEQ_LENGTH: "512" # Max sequence length for the model
+  # RERANKER_PORT is typically set in the Deployment's container spec or defaults in Dockerfile
+  # RERANKER_WORKERS is typically set in the Deployment's container spec or defaults in Dockerfile

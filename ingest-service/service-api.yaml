@@ -1,0 +1,17 @@
+# ingest-api/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-api-service
+  namespace: atenex
+  labels:
+    app: ingest-api
+spec:
+  type: ClusterIP # Default, suitable for internal access
+  selector:
+    app: ingest-api # Selects pods from the API deployment
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80 # Standard port for the service
+      targetPort: http # Matches the containerPort name 'http' (which is 8000)

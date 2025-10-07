@@ -1,0 +1,13 @@
+# docproc-service/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docproc-service-config
+  namespace: atenex
+data:
+  DOCPROC_LOG_LEVEL: "INFO"
+  DOCPROC_PORT: "8005" # Puerto interno del contenedor
+  DOCPROC_CHUNK_SIZE: "1000"
+  DOCPROC_CHUNK_OVERLAP: "200"
+  DOCPROC_SUPPORTED_CONTENT_TYPES: '["application/pdf","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/msword","text/plain","text/markdown","text/html","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-excel"]'
+  # DOCPROC_GUNICORN_WORKERS: "4" # Gunicorn workers se configuran en el CMD del Dockerfile, pero podría ser una variable aquí si se desea

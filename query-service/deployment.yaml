@@ -1,0 +1,46 @@
+# query-service/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-service-deployment
+  namespace: atenex
+  labels:
+    app: query-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: query-service
+  template:
+    metadata:
+      labels:
+        app: query-service
+    spec:
+      containers:
+        - name: query-service
+          image: ghcr.io/dev-nyro/query-service:develop-31976f6
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8001
+              protocol: TCP
+          command: ["gunicorn", "-k", "uvicorn.workers.UvicornWorker"]
+          args: ["-w", "2", "-b", "0.0.0.0:8001", "-t", "120", "app.main:app"]
+          envFrom:
+            - configMapRef:
+                name: query-service-config
+            - secretRef:
+                name: query-service-secrets
+          env:
+            - name: QUERY_ZILLIZ_API_KEY # MODIFIED: Added Zilliz API Key from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: query-service-secrets # Name of the k8s Secret
+                  key: ZILLIZ_API_KEY # Key within the Secret
+          resources:
+            requests:
+              cpu: "1500m"
+              memory: "3Gi"
+            limits:
+              cpu: "3000m"
+              memory: "8Gi"

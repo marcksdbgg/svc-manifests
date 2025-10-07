@@ -1,0 +1,79 @@
+# sparse-search-service/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparse-search-service
+  namespace: atenex
+  labels:
+    app: sparse-search-service
+    app.kubernetes.io/name: sparse-search-service
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: atenex-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparse-search-service
+  template:
+    metadata:
+      labels:
+        app: sparse-search-service
+        app.kubernetes.io/name: sparse-search-service
+        app.kubernetes.io/version: "1.0.0"
+    spec:
+      # serviceAccountName: sparse-search-runtime-sa # Alternativa si usas Workload Identity
+      volumes: # LLM: ADDED - Definir el volumen desde el Secret
+        - name: gcs-key-volume
+          secret:
+            secretName: sparse-search-gcs-key # Nombre del Secret creado en K8s
+      containers:
+        - name: sparse-search-service-container
+          image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Reemplaza con tu imagen
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8004
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: sparse-search-service-config
+            - secretRef:
+                name: sparse-search-service-secrets # Para SPARSE_POSTGRES_PASSWORD
+          env:
+            - name: SPARSE_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sparse-search-service-secrets
+                  key: SPARSE_POSTGRES_PASSWORD
+            # LLM: ADDED - Configurar GOOGLE_APPLICATION_CREDENTIALS
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcp-keys/key.json" # Ruta donde se montará la clave dentro del pod
+          volumeMounts: # LLM: ADDED - Montar el volumen en el contenedor
+            - name: gcs-key-volume
+              mountPath: "/etc/gcp-keys" # Directorio donde se montará el contenido del Secret
+              readOnly: true
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3

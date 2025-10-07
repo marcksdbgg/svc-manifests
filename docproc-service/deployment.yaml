@@ -1,0 +1,65 @@
+# docproc-service/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docproc-service-deployment
+  namespace: atenex
+  labels:
+    app: docproc-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docproc-service
+  template:
+    metadata:
+      labels:
+        app: docproc-service
+    spec:
+      containers:
+        - name: docproc-service
+          image: ghcr.io/dev-nyro/docproc-service:develop-f6fa2b8
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8005 # Debe coincidir con DOCPROC_PORT y el CMD del Dockerfile
+              protocol: TCP
+          # El CMD ya está en el Dockerfile, no es necesario aquí a menos que se quiera sobrescribir.
+          # command: ["gunicorn"]
+          # args: [
+          #     "-k", "uvicorn.workers.UvicornWorker",
+          #     "-w", "4", # Usar DOCPROC_GUNICORN_WORKERS si se define en ConfigMap
+          #     "-b", "0.0.0.0:8005",
+          #     "-t", "300", # Timeout más largo para procesamiento de archivos grandes
+          #     "--log-level", "info",
+          #     "app.main:app"
+          #   ]
+          envFrom:
+            - configMapRef:
+                name: docproc-service-config
+          # No se necesitan secretos específicos para este servicio por ahora
+          resources:
+            requests:
+              cpu: "500m" # PyMuPDF puede ser intensivo en CPU
+              memory: "1Gi" # Y también en memoria para archivos grandes
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+      # imagePullSecrets: # Descomentar si usas registro privado
+      # - name: your-registry-secret

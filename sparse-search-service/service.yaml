@@ -1,0 +1,19 @@
+# sparse-search-service/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sparse-search-service 
+  namespace: atenex
+  labels:
+    app: sparse-search-service 
+    app.kubernetes.io/name: sparse-search-service
+    app.kubernetes.io/part-of: atenex-platform
+spec:
+  type: ClusterIP 
+  selector:
+    app: sparse-search-service 
+  ports:
+  - name: http
+    port: 80 
+    targetPort: http 
+    protocol: TCP

@@ -1,0 +1,18 @@
+# embedding-service/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: embedding-service-config
+  namespace: atenex
+data:
+  EMBEDDING_LOG_LEVEL: "INFO"
+  EMBEDDING_PORT: "8003"
+
+  EMBEDDING_ACTIVE_EMBEDDING_PROVIDER: "openai"
+
+  # OpenAI Embedding Model Configuration
+  EMBEDDING_OPENAI_EMBEDDING_MODEL_NAME: "text-embedding-3-small"
+  EMBEDDING_EMBEDDING_DIMENSION: "1536"
+  
+  EMBEDDING_OPENAI_TIMEOUT_SECONDS: "30"
+  EMBEDDING_OPENAI_MAX_RETRIES: "3"

@@ -1,0 +1,62 @@
+# sparse-search-service/cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sparse-search-index-builder
+  namespace: atenex
+  labels:
+    app: sparse-search-service
+    component: index-builder
+    app.kubernetes.io/name: sparse-search-index-builder
+    app.kubernetes.io/part-of: atenex-platform
+spec:
+  schedule: "0 */6 * * *" # O "*/10 * * * *" para pruebas más rápidas
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: sparse-search-service
+            component: index-builder-pod
+            app.kubernetes.io/name: sparse-search-index-builder-pod
+        spec:
+          serviceAccountName: sparse-search-builder-sa # <--- ¡ASEGÚRATE QUE ESTA LÍNEA ESTÉ PRESENTE!
+          volumes:
+            - name: gcs-key-volume
+              secret:
+                secretName: sparse-search-gcs-key
+          containers:
+            - name: index-builder-container
+              image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Asegúrate que CI/CD actualice esto
+              imagePullPolicy: Always
+              command: ["python", "-m", "app.jobs.index_builder_cronjob"]
+              args:
+                - "--company-id"
+                - "ALL"
+              envFrom:
+                - configMapRef:
+                    name: sparse-search-service-config
+                - secretRef:
+                    name: sparse-search-service-secrets
+              env:
+                - name: SPARSE_POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: sparse-search-service-secrets
+                      key: SPARSE_POSTGRES_PASSWORD
+                - name: GOOGLE_APPLICATION_CREDENTIALS
+                  value: "/etc/gcp-keys/key.json"
+              volumeMounts:
+                - name: gcs-key-volume
+                  mountPath: "/etc/gcp-keys"
+                  readOnly: true
+              resources:
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+                limits:
+                  memory: "2Gi"
+                  cpu: "1"
+          restartPolicy: OnFailure

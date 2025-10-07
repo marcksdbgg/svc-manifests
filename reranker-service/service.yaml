@@ -1,0 +1,17 @@
+# reranker-service/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: reranker-service
+  namespace: atenex
+  labels:
+    app: reranker-service
+spec:
+  type: ClusterIP # Internal service
+  selector:
+    app: reranker-service # Matches labels of the Pods in the Deployment
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80 # Port the service will be available on within the cluster
+      targetPort: http # Named port on the Pods (which is 8004)

@@ -1,0 +1,26 @@
+# sparse-search-service/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sparse-search-service-config
+  namespace: atenex
+  labels:
+    app.kubernetes.io/name: sparse-search-service
+    app.kubernetes.io/part-of: atenex-platform
+data:
+  SPARSE_LOG_LEVEL: "INFO"
+  PORT: "8004" 
+  SPARSE_SERVICE_VERSION: "1.0.0"
+
+  SPARSE_POSTGRES_SERVER: "postgresql-service.atenex.svc.cluster.local"
+  SPARSE_POSTGRES_PORT: "5432"
+  SPARSE_POSTGRES_DB: "atenex"
+  SPARSE_POSTGRES_USER: "postgres" 
+  SPARSE_DB_POOL_MIN_SIZE: "2"
+  SPARSE_DB_POOL_MAX_SIZE: "10"
+  SPARSE_DB_CONNECT_TIMEOUT: "30"
+  SPARSE_DB_COMMAND_TIMEOUT: "60"
+
+  SPARSE_INDEX_GCS_BUCKET_NAME: "atenex-01" # Asegúrate que este bucket exista
+  SPARSE_INDEX_CACHE_MAX_ITEMS: "50"
+  SPARSE_INDEX_CACHE_TTL_SECONDS: "3600" # 1 hora

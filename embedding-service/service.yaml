@@ -1,0 +1,17 @@
+# embedding-service/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: embedding-service # DNS: embedding-service.atenex.svc.cluster.local
+  namespace: atenex
+  labels:
+    app: embedding-service
+spec:
+  type: ClusterIP # Default, good for internal services
+  selector:
+    app: embedding-service # Must match labels in the Deployment's template
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80 # Port the K8s Service will listen on
+      targetPort: http # Target port name on the Pod (which is 8003)

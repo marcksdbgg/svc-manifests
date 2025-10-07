@@ -1,0 +1,17 @@
+# docproc-service/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: docproc-service
+  namespace: atenex
+  labels:
+    app: docproc-service
+spec:
+  type: ClusterIP
+  selector:
+    app: docproc-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80 # Puerto que otros servicios usarán para llamar a docproc-service
+      targetPort: http # Nombre del puerto en el Deployment (que es 8005)

@@ -1,0 +1,82 @@
+# reranker-service/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reranker-service-deployment
+  namespace: atenex
+  labels:
+    app: reranker-service
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: reranker-service
+  template:
+    metadata:
+      labels:
+        app: reranker-service
+    spec:
+      containers:
+        - name: reranker-service
+          image: ghcr.io/dev-nyro/reranker-service:develop-74d7e4d # Placeholder: replace with actual image path and tag
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8004 # Port the application listens on (matches RERANKER_PORT default)
+              protocol: TCP
+          # Command and args are usually taken from the Dockerfile's CMD.
+          # If you need to override or ensure specific values, uncomment and adjust:
+          # command: ["gunicorn", "-k", "uvicorn.workers.UvicornWorker"]
+          # args: [
+          #   "app.main:app",
+          #   "--bind", "0.0.0.0:$(RERANKER_PORT)", # Ensure RERANKER_PORT is available
+          #   "--workers", "$(RERANKER_WORKERS)"    # Ensure RERANKER_WORKERS is available
+          # ]
+          envFrom:
+            - configMapRef:
+                name: reranker-service-config
+          env:
+            - name: RERANKER_PORT
+              value: "8004" # Explicitly set port, aligns with containerPort
+            - name: RERANKER_WORKERS
+              value: "2" # Explicitly set Gunicorn workers
+              # Hugging Face token might be needed for private models or to avoid rate limits
+              # - name: HUGGING_FACE_HUB_TOKEN
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: huggingface-secrets # Example, create this secret if needed
+              #       key: hub_token
+          resources:
+            requests:
+              cpu: "1000m" # 1 vCPU
+              memory: "2Gi" # Initial memory request
+            limits:
+              cpu: "2000m" # 2 vCPU
+              memory: "4Gi" # Max memory
+          volumeMounts:
+            - name: hf-cache-volume
+              mountPath: "/app/.cache/huggingface" # Matches RERANKER_HF_CACHE_DIR
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http # Refers to the named port 'http' (8004)
+            initialDelaySeconds: 60 # Time for model to load
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 65 # Slightly after liveness, ensuring model is ready
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: hf-cache-volume
+          emptyDir: {} # Stores model cache, ephemeral with pod.
+          # For persistent model cache across pod restarts (recommended for large models):
+          # persistentVolumeClaim:
+          #   claimName: reranker-hf-cache-pvc # Ensure this PVC is created
+      # imagePullSecrets: # Uncomment if using a private container registry
+      # - name: your-registry-secret

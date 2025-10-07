@@ -1,0 +1,22 @@
+# reranker-gpu.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: reranker-gpu
+  namespace: atenex
+spec:
+  ports:
+    - name: http
+      port: 8004        # puerto que usarán los pods
+      protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: reranker-gpu      # <-- mismo nombre que el Service
+  namespace: atenex
+subsets:
+  - addresses:
+      - ip: 192.168.65.1  # ← Cambiado a la puerta de enlace de Docker Desktop para WSL2
+    ports:
+      - port: 8004

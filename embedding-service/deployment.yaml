@@ -1,0 +1,66 @@
+# embedding-service/k8s/embedding-service-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embedding-service-deployment
+  namespace: atenex
+  labels:
+    app: embedding-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: embedding-service
+  template:
+    metadata:
+      labels:
+        app: embedding-service
+    spec:
+      # volumes: # ELIMINADO: dshm ya no es necesario para OpenAI
+      #   - name: dshm
+      #     emptyDir:
+      #       medium: Memory
+      #       sizeLimit: 256Mi
+      containers:
+        - name: embedding-service
+          image: ghcr.io/dev-nyro/embedding-service:develop-3792e69
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8003 # Debe coincidir con EMBEDDING_PORT del ConfigMap
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: embedding-service-config
+          env:
+            - name: EMBEDDING_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: embedding-service-secrets
+                  key: EMBEDDING_OPENAI_API_KEY
+          # volumeMounts: # ELIMINADO: dshm ya no es necesario
+          #   - name: dshm
+          #     mountPath: /dev/shm
+          resources:
+            requests:
+              cpu: "250m" # Reducido, ya que es I/O bound a OpenAI
+              memory: "512Mi" # Reducido, no hay modelo en memoria
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15 # Puede ser menor sin descarga de modelo local
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            # livenessProbe: # ELIMINADO según solicitud
+            #   httpGet:
+            #     path: /health
+            #     port: http
+            #   initialDelaySeconds: 60
+            #   periodSeconds: 15
+            #   timeoutSeconds: 5
+            #   failureThreshold: 3

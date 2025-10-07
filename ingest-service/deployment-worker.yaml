@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingest-worker-deployment
+  namespace: atenex
+  labels:
+    app: ingest-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ingest-worker
+  template:
+    metadata:
+      labels:
+        app: ingest-worker
+    spec:
+      containers:
+        - name: ingest-worker
+          image: ghcr.io/dev-nyro/ingest-service:develop-f6fa2b8
+          imagePullPolicy: Always
+          command: ["celery"]
+          args: ["-A", "app.tasks.celery_app", "worker", "--loglevel=INFO", "-P", "prefork", "-c", "4", # Number of worker processes
+          ]
+          envFrom:
+            - configMapRef:
+                name: ingest-service-config
+            - secretRef:
+                name: ingest-service-secrets # Reference to the secret
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcp-secrets/key.json"
+            - name: INGEST_ZILLIZ_API_KEY # MODIFIED: Added Zilliz API Key from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: ingest-service-secrets # Name of the k8s Secret
+                  key: ZILLIZ_API_KEY # Key within the Secret
+          volumeMounts:
+            - name: gcp-key-volume
+              mountPath: "/etc/gcp-secrets"
+              readOnly: true
+          resources:
+            requests:
+              cpu: "1000m" # 1 vCPU
+              memory: "3Gi"
+            limits:
+              cpu: "4000m" # 4 vCPU
+              memory: "8Gi"
+      volumes:
+        - name: gcp-key-volume
+          secret:
+            secretName: gcs-worker-sa-key
+            items:
+              - key: key.json
+                path: key.json

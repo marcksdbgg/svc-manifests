@@ -1,0 +1,19 @@
+# api-gateway/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: atenex
+data:
+  GATEWAY_LOG_LEVEL: "INFO"
+  GATEWAY_INGEST_SERVICE_URL: "http://ingest-api-service.atenex.svc.cluster.local:80"
+  GATEWAY_QUERY_SERVICE_URL: "http://query-service.atenex.svc.cluster.local:80"
+  GATEWAY_POSTGRES_SERVER: "postgresql-service.atenex.svc.cluster.local"
+  GATEWAY_POSTGRES_PORT: "5432"  
+  GATEWAY_POSTGRES_USER: "postgres"
+  GATEWAY_POSTGRES_DB: "atenex"
+  GATEWAY_DEFAULT_COMPANY_ID: "550e8400-e29b-41d4-a716-446655440000"
+  GATEWAY_HTTP_CLIENT_TIMEOUT: "30"
+  GATEWAY_HTTP_CLIENT_MAX_KEEPALIVE_CONNECTIONS: "100" # Corregido
+  GATEWAY_HTTP_CLIENT_MAX_CONNECTIONS: "200"
+  GATEWAY_JWT_ALGORITHM: "HS256"
