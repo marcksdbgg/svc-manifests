@@ -16,22 +16,26 @@ data:
   INGEST_POSTGRES_PORT: "5432"
   INGEST_POSTGRES_USER: "postgres"
   INGEST_POSTGRES_DB: "atenex"
-  # INGEST_POSTGRES_PASSWORD -> Secret
+  # INGEST_POSTGRES_PASSWORD is in a Secret
 
   # Milvus/Zilliz
-  INGEST_MILVUS_URI: "https://in03-0afab716eb46d7f.serverless.gcp-us-west1.cloud.zilliz.com" # MODIFIED
-  INGEST_MILVUS_COLLECTION_NAME: "atenex_collection" #"atenex_e5_collection" 
-  INGEST_MILVUS_GRPC_TIMEOUT: "20" # Increased timeout as per consideration for Zilliz Cloud
-
-  # Google Cloud Storage
-  INGEST_GCS_BUCKET_NAME: "atenex-01"
+  INGEST_MILVUS_URI: "https://in03-0afab716eb46d7f.serverless.gcp-us-west1.cloud.zilliz.com"
+  INGEST_MILVUS_COLLECTION_NAME: "atenex_collection"
+  INGEST_MILVUS_GRPC_TIMEOUT: "20"
+  
+  # MinIO S3-Compatible Storage
+  INGEST_MINIO_ENDPOINT: "minio.minio.svc.cluster.local:9000"
+  INGEST_MINIO_BUCKET_NAME: "atenex"
+  INGEST_MINIO_SECURE: "false" # Use 'true' if you configure TLS on MinIO
+  INGEST_MINIO_ACCESS_KEY: "admin123"
+  INGEST_MINIO_SECRET_KEY: "admin123"
 
   # Embedding Settings
-  INGEST_EMBEDDING_DIMENSION: "1536" #"768" 
+  INGEST_EMBEDDING_DIMENSION: "1536" 
 
   # Tokenizer Settings
   INGEST_TIKTOKEN_ENCODING_NAME: "cl100k_base"
 
   # URLs for dependent services
-  INGEST_EMBEDDING_SERVICE_URL: "http://embedding-service.atenex.svc.cluster.local:80/api/v1/embed" #"http://host.docker.internal:8003/api/v1/embed" 
+  INGEST_EMBEDDING_SERVICE_URL: "http://embedding-service.atenex.svc.cluster.local:80/api/v1/embed"
   INGEST_DOCPROC_SERVICE_URL: "http://docproc-service.atenex.svc.cluster.local:80/api/v1/process"
