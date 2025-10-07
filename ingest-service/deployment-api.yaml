@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ingest-api
-          image: ghcr.io/dev-nyro/ingest-service:develop-f6fa2b8 # Placeholder, CI/CD to update
+          image: ghcr.io/marcksdbgg/ingest-service:main-1073f7a # Placeholder, CI/CD to update
           imagePullPolicy: Always
           ports:
             - name: http
