@@ -44,7 +44,7 @@ data:
   # LLM (llama.cpp + Qwen) Settings
   # Nota: este endpoint debe ser accesible desde el clúster de Kubernetes. Cambia el host/IP
   # por la dirección expuesta de tu servidor llama.cpp externo (por ejemplo, un túnel, IP LAN o DNS público).
-  QUERY_LLM_API_BASE_URL: "http://llama-cpp-gateway.external.atenex.local:8080"
+  QUERY_LLM_API_BASE_URL: "http://192.168.1.43:8080"
   QUERY_LLM_MODEL_NAME: "qwen2.5-1.5b-instruct-q4_k_m.gguf"
   QUERY_LLM_MAX_OUTPUT_TOKENS: "4096"
 
