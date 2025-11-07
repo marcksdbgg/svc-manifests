@@ -41,20 +41,20 @@ data:
   QUERY_RERANKER_SERVICE_URL: "http://host.docker.internal:8004" # "http://reranker-service.atenex.svc.cluster.local:80" normal
   QUERY_RERANKER_CLIENT_TIMEOUT: "30"
 
-  # LLM (llama.cpp + Qwen) Settings
+  # LLM (llama.cpp + Granite) Settings
   # Nota: este endpoint debe ser accesible desde el clúster de Kubernetes. Cambia el host/IP
   # por la dirección expuesta de tu servidor llama.cpp externo (por ejemplo, un túnel, IP LAN o DNS público).
-  QUERY_LLM_API_BASE_URL: "http://192.168.1.43:8080"
-  QUERY_LLM_MODEL_NAME: "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+  QUERY_LLM_API_BASE_URL: "http://192.168.1.43:9090"
+  QUERY_LLM_MODEL_NAME: "granite-3.2-2b-instruct-q4_k_m.gguf"
   QUERY_LLM_MAX_OUTPUT_TOKENS: "4096"
 
   # (Legacy) Gemini settings can remain defined via secrets if needed
   # QUERY_GEMINI_MODEL_NAME: "gemini-2.0-flash"
 
   # RAG Pipeline Control & Parameters
-  QUERY_RETRIEVER_TOP_K: "100" # Nº de chunks a pedir a dense y sparse retrievers inicialmente
-  QUERY_MAX_CONTEXT_CHUNKS: "75" # Nº máx de chunks para el LLM después de reranking/filtering
-  QUERY_MAX_PROMPT_TOKENS: "500000" 
+  QUERY_RETRIEVER_TOP_K: "80" # Nº de chunks a pedir a dense y sparse retrievers inicialmente
+  QUERY_MAX_CONTEXT_CHUNKS: "40" # Nº máx de chunks para el LLM después de reranking/filtering
+  QUERY_MAX_PROMPT_TOKENS: "42000" 
   QUERY_DIVERSITY_FILTER_ENABLED: "true"
   QUERY_DIVERSITY_LAMBDA: "0.5" # Para MMR si está habilitado
 
@@ -69,6 +69,6 @@ data:
   
   # MapReduce (Opcional, actualmente gestionado en config.py pero podría moverse aquí)
   QUERY_MAPREDUCE_ENABLED: "true"
-  QUERY_MAPREDUCE_CHUNK_BATCH_SIZE: "5"
-  QUERY_MAPREDUCE_ACTIVATION_THRESHOLD_CHUNKS: "25"
+  QUERY_MAPREDUCE_CHUNK_BATCH_SIZE: "4"
+  QUERY_MAPREDUCE_ACTIVATION_THRESHOLD_CHUNKS: "35"
   QUERY_TIKTOKEN_ENCODING_NAME: "cl100k_base"
