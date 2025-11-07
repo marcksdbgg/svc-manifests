@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: query-service
-          image: ghcr.io/marcksdbgg/query-service:main-814b914
+          image: ghcr.io/marcksdbgg/query-service:main-fa3bb46
           imagePullPolicy: Always
           ports:
             - name: http
