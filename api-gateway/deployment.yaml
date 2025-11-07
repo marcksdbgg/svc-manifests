@@ -26,7 +26,7 @@ spec:
           # La imagen será actualizada por el pipeline CI/CD
 
           # Ejemplo de imagen inicial, el pipeline la reemplazará
-          image: ghcr.io/marcksdbgg/api-gateway:main-4e6a273
+          image: ghcr.io/marcksdbgg/api-gateway:main-fa3bb46
           # Política de pull de imagen (Always para asegurar la última, IfNotPresent si prefieres caché)
 
           imagePullPolicy: Always
