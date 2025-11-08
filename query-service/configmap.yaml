@@ -46,31 +46,31 @@ data:
   # por la dirección expuesta de tu servidor llama.cpp externo (por ejemplo, un túnel, IP LAN o DNS público).
   QUERY_LLM_API_BASE_URL: "http://192.168.1.43:9090"
   QUERY_LLM_MODEL_NAME: "granite-3.2-2b-instruct-q4_k_m.gguf"
-  QUERY_LLM_MAX_OUTPUT_TOKENS: "2048"
+  QUERY_LLM_MAX_OUTPUT_TOKENS: "1024"
 
   # (Legacy) Gemini settings can remain defined via secrets if needed
   # QUERY_GEMINI_MODEL_NAME: "gemini-2.0-flash"
 
   # RAG Pipeline Control & Parameters
   QUERY_RETRIEVER_TOP_K: "50" # Nº de chunks a pedir a dense y sparse retrievers inicialmente
-  QUERY_MAX_CONTEXT_CHUNKS: "24" # Nº máx de chunks para el LLM después de reranking/filtering
-  QUERY_MAX_PROMPT_TOKENS: "32000" 
-  QUERY_MAX_TOKENS_PER_CHUNK: "1200"
+  QUERY_MAX_CONTEXT_CHUNKS: "16" # Nº máx de chunks para el LLM después de reranking/filtering
+  QUERY_MAX_PROMPT_TOKENS: "22000" 
+  QUERY_MAX_TOKENS_PER_CHUNK: "900"
   QUERY_MAX_CHARS_PER_CHUNK: "4800"
   QUERY_DIVERSITY_FILTER_ENABLED: "true"
   QUERY_DIVERSITY_LAMBDA: "0.5" # Para MMR si está habilitado
 
   # HTTP Client Settings (Globales, usados por http_client en UseCase para Reranker y otros futuros)
-  QUERY_HTTP_CLIENT_TIMEOUT: "320" 
+  QUERY_HTTP_CLIENT_TIMEOUT: "180" 
   QUERY_HTTP_CLIENT_MAX_RETRIES: "2"
   QUERY_HTTP_CLIENT_BACKOFF_FACTOR: "1.0"
 
   # Chat history settings
-  QUERY_MAX_CHAT_HISTORY_MESSAGES: "10"
+  QUERY_MAX_CHAT_HISTORY_MESSAGES: "6"
   QUERY_NUM_SOURCES_TO_SHOW: "7"
   
   # MapReduce (Opcional, actualmente gestionado en config.py pero podría moverse aquí)
   QUERY_MAPREDUCE_ENABLED: "true"
-  QUERY_MAPREDUCE_CHUNK_BATCH_SIZE: "4"
-  QUERY_MAPREDUCE_ACTIVATION_THRESHOLD_CHUNKS: "18"
+  QUERY_MAPREDUCE_CHUNK_BATCH_SIZE: "3"
+  QUERY_MAPREDUCE_ACTIVATION_THRESHOLD_CHUNKS: "16"
   QUERY_TIKTOKEN_ENCODING_NAME: "cl100k_base"
