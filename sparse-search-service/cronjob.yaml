@@ -1,16 +1,15 @@
-# sparse-search-service/cronjob.yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: sparse-search-index-builder
-  namespace: atenex
+  namespace: nyro-develop
   labels:
     app: sparse-search-service
     component: index-builder
     app.kubernetes.io/name: sparse-search-index-builder
     app.kubernetes.io/part-of: atenex-platform
 spec:
-  schedule: "0 */6 * * *" # O "*/10 * * * *" para pruebas más rápidas
+  schedule: "0 */6 * * *"
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 3600
@@ -22,10 +21,10 @@ spec:
             component: index-builder-pod
             app.kubernetes.io/name: sparse-search-index-builder-pod
         spec:
-          serviceAccountName: sparse-search-builder-sa # <--- ¡ASEGÚRATE QUE ESTA LÍNEA ESTÉ PRESENTE!
+          serviceAccountName: sparse-search-builder-sa
           containers:
             - name: index-builder-container
-              image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Asegúrate que CI/CD actualice esto
+              image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60
               imagePullPolicy: Always
               command: ["python", "-m", "app.jobs.index_builder_cronjob"]
               args:
@@ -34,20 +33,21 @@ spec:
               envFrom:
                 - configMapRef:
                     name: sparse-search-service-config
-                - secretRef:
-                    name: sparse-search-service-secrets
               env:
                 - name: SPARSE_POSTGRES_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: sparse-search-service-secrets
                       key: SPARSE_POSTGRES_PASSWORD
-                - name: SPARSE_MINIO_ACCESS_KEY
+                      
+                # Mapeo correcto para MinIO/S3
+                - name: SPARSE_INDEX_STORAGE_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
                       name: sparse-search-service-secrets
                       key: SPARSE_MINIO_ACCESS_KEY
-                - name: SPARSE_MINIO_SECRET_KEY
+                      
+                - name: SPARSE_INDEX_STORAGE_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
                       name: sparse-search-service-secrets

@@ -1,9 +1,8 @@
-# sparse-search-service/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sparse-search-service
-  namespace: atenex
+  namespace: nyro-develop
   labels:
     app: sparse-search-service
     app.kubernetes.io/name: sparse-search-service
@@ -22,10 +21,9 @@ spec:
         app.kubernetes.io/name: sparse-search-service
         app.kubernetes.io/version: "1.0.0"
     spec:
-      # serviceAccountName: sparse-search-runtime-sa # Alternativa si usas Workload Identity
       containers:
         - name: sparse-search-service-container
-          image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Reemplaza con tu imagen
+          image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60
           imagePullPolicy: Always
           ports:
             - name: http
@@ -34,46 +32,47 @@ spec:
           envFrom:
             - configMapRef:
                 name: sparse-search-service-config
-            - secretRef:
-                name: sparse-search-service-secrets # Para SPARSE_POSTGRES_PASSWORD
           env:
+            # Mapping Database Password
             - name: SPARSE_POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_POSTGRES_PASSWORD
-            - name: SPARSE_MINIO_ACCESS_KEY
+
+            # Mapping MinIO Keys a lo que espera config.py (SPARSE_INDEX_STORAGE_...)
+            - name: SPARSE_INDEX_STORAGE_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_MINIO_ACCESS_KEY
-            - name: SPARSE_MINIO_SECRET_KEY
+
+            - name: SPARSE_INDEX_STORAGE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_MINIO_SECRET_KEY
+                  
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "512Mi"
+              cpu: "250m"
             limits:
-              memory: "4Gi"
-              cpu: "2000m"
+              memory: "2Gi"
+              cpu: "1000m"
           readinessProbe:
             httpGet:
               path: /health
               port: http
-            initialDelaySeconds: 30
-            periodSeconds: 15
+            initialDelaySeconds: 15
+            periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-            successThreshold: 1
           livenessProbe:
             httpGet:
               path: /health
               port: http
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-
