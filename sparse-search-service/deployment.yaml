@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: sparse-search-service-container
-          image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60
+          image: ghcr.io/marcksdbgg/sparse-search-service:main-c44acb2
           imagePullPolicy: Always
           ports:
             - name: http
@@ -39,20 +39,17 @@ spec:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_POSTGRES_PASSWORD
-
             # Mapping MinIO Keys a lo que espera config.py (SPARSE_INDEX_STORAGE_...)
             - name: SPARSE_INDEX_STORAGE_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_MINIO_ACCESS_KEY
-
             - name: SPARSE_INDEX_STORAGE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_MINIO_SECRET_KEY
-                  
           resources:
             requests:
               memory: "512Mi"

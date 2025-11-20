@@ -24,7 +24,7 @@ spec:
           serviceAccountName: sparse-search-builder-sa
           containers:
             - name: index-builder-container
-              image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60
+              image: ghcr.io/marcksdbgg/sparse-search-service:main-c44acb2
               imagePullPolicy: Always
               command: ["python", "-m", "app.jobs.index_builder_cronjob"]
               args:
@@ -39,14 +39,12 @@ spec:
                     secretKeyRef:
                       name: sparse-search-service-secrets
                       key: SPARSE_POSTGRES_PASSWORD
-                      
                 # Mapeo correcto para MinIO/S3
                 - name: SPARSE_INDEX_STORAGE_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
                       name: sparse-search-service-secrets
                       key: SPARSE_MINIO_ACCESS_KEY
-                      
                 - name: SPARSE_INDEX_STORAGE_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
