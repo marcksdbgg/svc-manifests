@@ -23,10 +23,6 @@ spec:
         app.kubernetes.io/version: "1.0.0"
     spec:
       # serviceAccountName: sparse-search-runtime-sa # Alternativa si usas Workload Identity
-      volumes: # LLM: ADDED - Definir el volumen desde el Secret
-        - name: gcs-key-volume
-          secret:
-            secretName: sparse-search-gcs-key # Nombre del Secret creado en K8s
       containers:
         - name: sparse-search-service-container
           image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Reemplaza con tu imagen
@@ -46,13 +42,16 @@ spec:
                 secretKeyRef:
                   name: sparse-search-service-secrets
                   key: SPARSE_POSTGRES_PASSWORD
-            # LLM: ADDED - Configurar GOOGLE_APPLICATION_CREDENTIALS
-            - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: "/etc/gcp-keys/key.json" # Ruta donde se montará la clave dentro del pod
-          volumeMounts: # LLM: ADDED - Montar el volumen en el contenedor
-            - name: gcs-key-volume
-              mountPath: "/etc/gcp-keys" # Directorio donde se montará el contenido del Secret
-              readOnly: true
+            - name: SPARSE_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sparse-search-service-secrets
+                  key: SPARSE_MINIO_ACCESS_KEY
+            - name: SPARSE_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sparse-search-service-secrets
+                  key: SPARSE_MINIO_SECRET_KEY
           resources:
             requests:
               memory: "1Gi"

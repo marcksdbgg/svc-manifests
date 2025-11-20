@@ -23,10 +23,6 @@ spec:
             app.kubernetes.io/name: sparse-search-index-builder-pod
         spec:
           serviceAccountName: sparse-search-builder-sa # <--- ¡ASEGÚRATE QUE ESTA LÍNEA ESTÉ PRESENTE!
-          volumes:
-            - name: gcs-key-volume
-              secret:
-                secretName: sparse-search-gcs-key
           containers:
             - name: index-builder-container
               image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Asegúrate que CI/CD actualice esto
@@ -46,12 +42,16 @@ spec:
                     secretKeyRef:
                       name: sparse-search-service-secrets
                       key: SPARSE_POSTGRES_PASSWORD
-                - name: GOOGLE_APPLICATION_CREDENTIALS
-                  value: "/etc/gcp-keys/key.json"
-              volumeMounts:
-                - name: gcs-key-volume
-                  mountPath: "/etc/gcp-keys"
-                  readOnly: true
+                - name: SPARSE_MINIO_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: sparse-search-service-secrets
+                      key: SPARSE_MINIO_ACCESS_KEY
+                - name: SPARSE_MINIO_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: sparse-search-service-secrets
+                      key: SPARSE_MINIO_SECRET_KEY
               resources:
                 requests:
                   memory: "1Gi"

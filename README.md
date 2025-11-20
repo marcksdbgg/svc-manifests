@@ -93,10 +93,10 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 - Recursos creados: Deployment `sparse-search-service`, Service `sparse-search-service`, CronJob `sparse-search-index-builder`, ServiceAccount `sparse-search-builder-sa`, ConfigMap `sparse-search-service-config`.
 - Funcionalidad: servicio BM25 (sparse retrieval) y job periódico que reconstruye índices en GCS.
 - Secrets/Volumes:
-  - Secret `sparse-search-gcs-key` (montado para acceso a GCS) y `sparse-search-service-secrets` para la contraseña de Postgres.
+  - Secret `sparse-search-service-secrets` para credenciales de Postgres y MinIO (`SPARSE_POSTGRES_PASSWORD`, `SPARSE_MINIO_ACCESS_KEY`, `SPARSE_MINIO_SECRET_KEY`).
   - CronJob usa `serviceAccountName: sparse-search-builder-sa` — crear RBAC si es necesario.
 - Recomendaciones:
-  - Verifica `SPARSE_INDEX_GCS_BUCKET_NAME` y permisos de la service account.
+  - Verifica los valores de MinIO (`SPARSE_STORAGE_BACKEND`, endpoint, bucket y credenciales) antes de desplegar.
   - Ajustar schedule del CronJob para producción/test.
 
 ### postgresql
@@ -114,7 +114,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 ## Recursos globales y dependencias externas
 
 - Redis: `redis-service-master.nyro-develop.svc.cluster.local:6379` (usado por Celery en ingest).
-- GCS: se usan secretos/keys montadas en múltiples servicios (`gcs-worker-sa-key`, `sparse-search-gcs-key`). Asegura que las claves estén protegidas y que el bucket exista.
+- MinIO: varias apps consumen `minio.minio.svc.cluster.local:9000`; mantén sincronizadas las credenciales en los Secrets correspondientes.
 - Milvus / Zilliz Cloud: URLs apuntan a instancias serverless de Zilliz (ajustar si usas instancia propia).
 - Secrets esperados (resumen):
   - `api-gateway-secrets`

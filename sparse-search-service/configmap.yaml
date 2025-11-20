@@ -9,18 +9,24 @@ metadata:
     app.kubernetes.io/part-of: atenex-platform
 data:
   SPARSE_LOG_LEVEL: "INFO"
-  PORT: "8004" 
+  PORT: "8004"
   SPARSE_SERVICE_VERSION: "1.0.0"
 
   SPARSE_POSTGRES_SERVER: "postgresql-service.atenex.svc.cluster.local"
   SPARSE_POSTGRES_PORT: "5432"
   SPARSE_POSTGRES_DB: "atenex"
-  SPARSE_POSTGRES_USER: "postgres" 
+  SPARSE_POSTGRES_USER: "postgres"
   SPARSE_DB_POOL_MIN_SIZE: "2"
   SPARSE_DB_POOL_MAX_SIZE: "10"
   SPARSE_DB_CONNECT_TIMEOUT: "30"
   SPARSE_DB_COMMAND_TIMEOUT: "60"
 
-  SPARSE_INDEX_GCS_BUCKET_NAME: "atenex-01" # Asegúrate que este bucket exista
+  # MinIO object storage (replaces previous GCS bucket usage)
+  SPARSE_STORAGE_BACKEND: "minio"
+  SPARSE_INDEX_BUCKET_NAME: "atenex"
+  SPARSE_MINIO_ENDPOINT: "http://minio.minio.svc.cluster.local:9000"
+  SPARSE_MINIO_REGION: "us-east-1"
+  SPARSE_MINIO_SECURE: "false"
+
   SPARSE_INDEX_CACHE_MAX_ITEMS: "50"
   SPARSE_INDEX_CACHE_TTL_SECONDS: "3600" # 1 hora
