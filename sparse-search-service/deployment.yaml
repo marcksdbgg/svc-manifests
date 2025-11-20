@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: atenex-platform
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: sparse-search-service
