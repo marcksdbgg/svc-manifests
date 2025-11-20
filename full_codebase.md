@@ -47,13 +47,13 @@ app/
 
 ## File: `README.md`
 ```md
-# Manifiestos — Atenex Platform (nyro-develop)
+# Manifiestos — Atenex Platform (atenex)
 
 Este documento resume los manifiestos Kubernetes disponibles en este directorio `atenex-manifests`. Está escrito en español y provee un inventario por microservicio, namespaces usados, secretos y ConfigMaps esperados, puertos, y recomendaciones técnicas para despliegue.
 
 ## Visión general
 
-- Namespace principal utilizado por los manifiestos: `nyro-develop` (asegúrate de crearlo antes de aplicar los recursos).
+- Namespace principal utilizado por los manifiestos: `atenex` (asegúrate de crearlo antes de aplicar los recursos).
 - Tipo de acceso a los servicios: la mayoría usan `Service` tipo `ClusterIP` (acceso interno). Cambia a `LoadBalancer` o configura un `Ingress` si se requiere acceso externo.
 - Pipeline CI/CD: muchas imágenes incluidas son placeholders (ej. `ghcr.io/dev-nyro/...:develop-...`) y se espera que el pipeline reemplace tags por versiones apropiadas.
 
@@ -63,7 +63,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### api-gateway
 - Archivos: `api-gateway/deployment.yaml`, `api-gateway/service.yaml`, `api-gateway/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `api-gateway-deployment`, Service `api-gateway-service`, ConfigMap `api-gateway-config`.
 - Puertos: container 8080, Service expone 80 (targetPort `http`).
 - ConfigMaps/Secrets esperados:
@@ -76,7 +76,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### ingest-service
 - Archivos: `ingest-service/deployment-api.yaml`, `ingest-service/deployment-worker.yaml`, `ingest-service/service-api.yaml`, `ingest-service/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployments `ingest-api-deployment`, `ingest-worker-deployment`, Service `ingest-api-service`, ConfigMap `ingest-service-config`.
 - Puertos: API container 8000 -> Service 80 (targetPort `http`). Worker no expone servicio.
 - ConfigMaps/Secrets/Volumes:
@@ -86,11 +86,11 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 - Recomendaciones:
   - Verifica la URL de Milvus/Zilliz y los timeouts.
   - Ajustar recursos del worker (actualmente altos: requests 1 CPU / 3Gi memoria).
-  - Asegurar un broker Redis accesible en `redis-service-master.nyro-develop.svc.cluster.local:6379`.
+  - Asegurar un broker Redis accesible en `redis-service-master.atenex.svc.cluster.local:6379`.
 
 ### embedding-service
 - Archivos: `embedding-service/deployment.yaml`, `embedding-service/service.yaml`, `embedding-service/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `embedding-service-deployment`, Service `embedding-service`, ConfigMap `embedding-service-config`.
 - Puertos: container 8003 -> Service 80 (targetPort `http`).
 - Secrets:
@@ -101,7 +101,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### docproc-service
 - Archivos: `docproc-service/deployment.yaml`, `docproc-service/service.yaml`, `docproc-service/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `docproc-service-deployment`, Service `docproc-service`, ConfigMap `docproc-service-config`.
 - Puertos: container 8005 -> Service 80.
 - Consideraciones:
@@ -110,7 +110,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### query-service
 - Archivos: `query-service/deployment.yaml`, `query-service/service.yaml`, `query-service/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `query-service-deployment`, Service `query-service`, ConfigMap `query-service-config`.
 - Puertos: container 8001 -> Service 80.
 - ConfigMaps/Secrets:
@@ -122,7 +122,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### reranker-service
 - Archivos: `reranker-service/deployment.yaml`, `reranker-service/service.yaml`, `reranker-service/configmap.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `reranker-service-deployment` (nota: replicas: 0 en manifiesto), Service `reranker-service`, ConfigMap `reranker-service-config`.
 - Puertos: container 8004 -> Service 80.
 - Consideraciones:
@@ -131,14 +131,14 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### reranker_gpu (endpoints)
 - Archivo: `reranker_gpu-service/reranker-gpu.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Observaciones:
   - Define un Service `reranker-gpu` y Endpoints apuntando a una IP local (por ejemplo Docker Desktop gateway). Útil para enrutar hacia un servicio externo (GPU host) o un proceso fuera del cluster.
   - Ajustar la IP en `Endpoints.subsets.addresses.ip` a la correcta en producción.
 
 ### sparse-search-service
 - Archivos: `sparse-search-service/configmap.yaml`, `sparse-search-service/deployment.yaml`, `sparse-search-service/service.yaml`, `sparse-search-service/cronjob.yaml`, `sparse-search-service/serviceaccount.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: Deployment `sparse-search-service`, Service `sparse-search-service`, CronJob `sparse-search-index-builder`, ServiceAccount `sparse-search-builder-sa`, ConfigMap `sparse-search-service-config`.
 - Funcionalidad: servicio BM25 (sparse retrieval) y job periódico que reconstruye índices en GCS.
 - Secrets/Volumes:
@@ -150,7 +150,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ### postgresql
 - Archivos: `postgresql/statefulset.yaml`, `postgresql/service.yaml`, `postgresql/persistent-volume-claim.yaml`
-- Namespace: `nyro-develop`
+- Namespace: `atenex`
 - Recursos creados: StatefulSet `postgresql`, Service `postgresql-service`, PersistentVolumeClaim `postgresql-pvc`.
 - Secrets esperados:
   - Secret `postgresql-secrets` con claves `POSTGRES_USER` y `POSTGRES_PASSWORD`.
@@ -162,7 +162,7 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ## Recursos globales y dependencias externas
 
-- Redis: `redis-service-master.nyro-develop.svc.cluster.local:6379` (usado por Celery en ingest).
+- Redis: `redis-service-master.atenex.svc.cluster.local:6379` (usado por Celery en ingest).
 - MinIO: varias apps consumen `minio.minio.svc.cluster.local:9000`; mantén sincronizadas las credenciales en los Secrets correspondientes.
 - Milvus / Zilliz Cloud: URLs apuntan a instancias serverless de Zilliz (ajustar si usas instancia propia).
 - Secrets esperados (resumen):
@@ -177,9 +177,9 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 
 ## Namespaces y RBAC
 
-- Todos los manifiestos apuntan al namespace `nyro-develop`. Crear el namespace antes de aplicar:
+- Todos los manifiestos apuntan al namespace `atenex`. Crear el namespace antes de aplicar:
 
-  kubectl create namespace nyro-develop
+  kubectl create namespace atenex
 
 - El CronJob `sparse-search-index-builder` usa `serviceAccountName: sparse-search-builder-sa`; considera crear roles/rolebindings necesarios para acceso a Secrets/PVC/GCS si el clúster lo requiere.
 
@@ -197,39 +197,39 @@ Cada entrada incluye los recursos principales (Deployment/StatefulSet, Service, 
 1) Crear namespace:
 
 ```powershell
-kubectl create namespace nyro-develop
+kubectl create namespace atenex
 ```
 
 2) Crear Secrets y ConfigMaps necesarios (ejemplos simplificados):
 
 ```powershell
 # Crear secret para Postgres
-kubectl create secret generic postgresql-secrets --namespace nyro-develop --from-literal=POSTGRES_USER=postgres --from-literal=POSTGRES_PASSWORD="changeme"
+kubectl create secret generic postgresql-secrets --namespace atenex --from-literal=POSTGRES_USER=postgres --from-literal=POSTGRES_PASSWORD="changeme"
 
 # Crear secret con GCS key (archivo key.json en C:\keys\key.json)
-kubectl create secret generic gcs-worker-sa-key --namespace nyro-develop --from-file=key.json=C:\keys\key.json
+kubectl create secret generic gcs-worker-sa-key --namespace atenex --from-file=key.json=C:\keys\key.json
 ```
 
 3) Aplicar recursos en orden recomendado (Postgres -> infra -> servicios que dependen de ellos):
 
 ```powershell
-kubectl apply -f postgresql/ -n nyro-develop
+kubectl apply -f postgresql/ -n atenex
 # Esperar que postgres esté listo
-kubectl rollout status statefulset/postgresql -n nyro-develop
+kubectl rollout status statefulset/postgresql -n atenex
 
-kubectl apply -f sparse-search-service/ -n nyro-develop
-kubectl apply -f ingest-service/ -n nyro-develop
-kubectl apply -f embedding-service/ -n nyro-develop
-kubectl apply -f docproc-service/ -n nyro-develop
-kubectl apply -f query-service/ -n nyro-develop
-kubectl apply -f reranker-service/ -n nyro-develop
-kubectl apply -f api-gateway/ -n nyro-develop
+kubectl apply -f sparse-search-service/ -n atenex
+kubectl apply -f ingest-service/ -n atenex
+kubectl apply -f embedding-service/ -n atenex
+kubectl apply -f docproc-service/ -n atenex
+kubectl apply -f query-service/ -n atenex
+kubectl apply -f reranker-service/ -n atenex
+kubectl apply -f api-gateway/ -n atenex
 ```
 
 4) Verificar servicios y endpoints:
 
 ```powershell
-kubectl get pods,svc,deploy,sts -n nyro-develop
+kubectl get pods,svc,deploy,sts -n atenex
 ```
 
 ## File: `api-gateway/configmap.yaml`

@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: sparse-search-index-builder
-  namespace: nyro-develop
+  namespace: atenex
   labels:
     app: sparse-search-service
     component: index-builder

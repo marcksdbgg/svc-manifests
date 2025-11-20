@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sparse-search-service
-  namespace: nyro-develop
+  namespace: atenex
   labels:
     app: sparse-search-service
     app.kubernetes.io/name: sparse-search-service
