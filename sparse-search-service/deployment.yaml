@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: sparse-search-service-container
-          image: ghcr.io/marcksdbgg/sparse-search-service:main-c44acb2
+          image: ghcr.io/marcksdbgg/sparse-search-service:main-c99f37f
           imagePullPolicy: Always
           ports:
             - name: http
