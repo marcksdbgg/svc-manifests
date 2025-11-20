@@ -25,7 +25,7 @@ spec:
       # serviceAccountName: sparse-search-runtime-sa # Alternativa si usas Workload Identity
       containers:
         - name: sparse-search-service-container
-          image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Reemplaza con tu imagen
+          image: ghcr.io/marcksdbgg/sparse-search-service:main-1006081 # Reemplaza con tu imagen
           imagePullPolicy: Always
           ports:
             - name: http
@@ -76,4 +76,3 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-

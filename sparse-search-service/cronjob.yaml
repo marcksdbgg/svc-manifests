@@ -25,7 +25,7 @@ spec:
           serviceAccountName: sparse-search-builder-sa # <--- ¡ASEGÚRATE QUE ESTA LÍNEA ESTÉ PRESENTE!
           containers:
             - name: index-builder-container
-              image: ghcr.io/dev-nyro/sparse-search-service:develop-48c4f60 # Asegúrate que CI/CD actualice esto
+              image: ghcr.io/marcksdbgg/sparse-search-service:main-1006081 # Asegúrate que CI/CD actualice esto
               imagePullPolicy: Always
               command: ["python", "-m", "app.jobs.index_builder_cronjob"]
               args:
