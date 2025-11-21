@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ingest-worker
-          image: ghcr.io/marcksdbgg/ingest-service:main-932a4ef
+          image: ghcr.io/marcksdbgg/ingest-service:main-db29e44
           imagePullPolicy: Always
           command: ["celery"]
           args: ["-A", "app.tasks.celery_app", "worker", "--loglevel=INFO", "-P", "prefork", "-c", "4", # Number of worker processes
