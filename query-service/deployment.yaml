@@ -32,11 +32,16 @@ spec:
             - secretRef:
                 name: query-service-secrets
           env:
-            - name: QUERY_ZILLIZ_API_KEY # MODIFIED: Added Zilliz API Key from Secret
+            - name: QUERY_ZILLIZ_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: query-service-secrets # Name of the k8s Secret
-                  key: ZILLIZ_API_KEY # Key within the Secret
+                  name: query-service-secrets
+                  key: ZILLIZ_API_KEY
+            - name: QUERY_GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: query-service-secrets
+                  key: QUERY_GEMINI_API_KEY
           resources:
             requests:
               cpu: "1500m"
